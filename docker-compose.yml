@@ -1,0 +1,48 @@
+version: "3"
+services:
+  # MongoDB のコンテナ
+  mongodb:
+    container_name: "mongodb"
+    restart: always
+    image: mongo:6.0.13
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongo/init:/docker-entrypoint-initdb.d # 初期化スクリプト
+      # docker-entrypoint-initdb.dにShell ScriptかJavaScriptで書いたスクリプトがあれば、コンテナ起動時に実行してくれるのでホストからバインドマウントしている
+      # 初期化時にユーザーを作りたい、またはDBに初期データを入れたい時に使える
+
+      - mongoDataStore:/data/db # MongoDB のデータファイル
+      # - ./mongo/db:/data/db
+      # /data/db について -> MongoDBのデータの保存場所 名前付きボリュームではなく、バインドマウントにしたい場合はコメントアウトしている方を使う
+    environment:
+      MONRO_INITDB_ROOT_USERNAME: admin # MongoDB の 管理者のユーザー名
+      MONRO_INITDB_ROOT_PASSWORD: admin123 # MongoDB の 管理者のパスワード
+      MONRO_INITDB_ROOT_DATABASE: mongotable # 初期DBの作成
+
+  # mongo_express のコンテナ
+  mongo_express:
+    container_name: "mongo_express"
+    image: mongo-express:1.0.2
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      # この三つはmongodbで設定している値と合わせておく必要がある
+      ME_CONFIG_MONGODB_SERVER: mongodb # Mongo Express が接続する MongoDB のサーバーを指定(サービス名)
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin # Mongo Express が MongoDB に接続する際のユーザー名
+      ME_CONFIG_MONGODB_ADMINPASSWORD: admin123 # Mongo Express がMongoDB に接続する際のパスワード
+
+      ME_CONFIG_BASICAUTH_USERNAME: admin # Mongo Express 基本認証のユーザー名
+      ME_CONFIG_BASICAUTH_PASSWORD: password # Mongo Express 基本認証のパスワード
+    depends_on:
+      mongodb:
+        condition: service_stated # mongo コンテナが起動してから起動する
+  
+  # 名前付きボリューム
+  volumes:
+    mongoDataStore:
+      name: mongoDataStore
+
+# MongoDBコンテナとmongo_expressコンテナを作る
+# MongoDBのデータは名前付きボリュームで管理する
