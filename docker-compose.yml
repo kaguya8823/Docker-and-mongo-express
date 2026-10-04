@@ -1,4 +1,3 @@
-version: "3"
 
 # 名前付きボリューム
 volumes:
@@ -12,7 +11,7 @@ services:
     restart: always
     image: mongo:6.0.13
     ports:
-      - "27017:27017"
+      - "27018:27017" # 左がわが使うポート。右側がコンテナのポート。docker-compose.ymlのmongodbサービスの27017ポートをホストの27018ポートにマッピングしている
     volumes:
       - ./mongo/init:/docker-entrypoint-initdb.d # 初期化スクリプト
       # docker-entrypoint-initdb.dにShell ScriptかJavaScriptで書いたスクリプトがあれば、コンテナ起動時に実行してくれるのでホストからバインドマウントしている
