@@ -1,4 +1,10 @@
 version: "3"
+
+# 名前付きボリューム
+volumes:
+    mongoDataStore:
+      name: mongoDataStore
+
 services:
   # MongoDB のコンテナ
   mongodb:
@@ -16,9 +22,9 @@ services:
       # - ./mongo/db:/data/db
       # /data/db について -> MongoDBのデータの保存場所 名前付きボリュームではなく、バインドマウントにしたい場合はコメントアウトしている方を使う
     environment:
-      MONRO_INITDB_ROOT_USERNAME: admin # MongoDB の 管理者のユーザー名
-      MONRO_INITDB_ROOT_PASSWORD: admin123 # MongoDB の 管理者のパスワード
-      MONRO_INITDB_ROOT_DATABASE: mongotable # 初期DBの作成
+      MONGO_INITDB_ROOT_USERNAME: admin # MongoDB の 管理者のユーザー名
+      MONGO_INITDB_ROOT_PASSWORD: admin123 # MongoDB の 管理者のパスワード
+      MONGO_INITDB_ROOT_DATABASE: mongotable # 初期DBの作成
 
   # mongo_express のコンテナ
   mongo_express:
@@ -37,12 +43,9 @@ services:
       ME_CONFIG_BASICAUTH_PASSWORD: password # Mongo Express 基本認証のパスワード
     depends_on:
       mongodb:
-        condition: service_stated # mongo コンテナが起動してから起動する
+        condition: service_started # mongo コンテナが起動してから起動する
   
-  # 名前付きボリューム
-  volumes:
-    mongoDataStore:
-      name: mongoDataStore
+
 
 # MongoDBコンテナとmongo_expressコンテナを作る
 # MongoDBのデータは名前付きボリュームで管理する
