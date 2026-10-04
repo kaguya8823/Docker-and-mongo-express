@@ -53,4 +53,20 @@ mongo-expressは、複数のデータベースに接続し、データベース�
 コンテナ作成用にdocker-compose.ymlを用意する
 mongodb用にmongoディレクトリを作っておく
 
+## Docker コマンド一覧
+docker compose up　サービスを起動
+docker compose down　サービス停止
+docker compose restart　サービスを再起動
+
+
 ## MongoDB のコンテナ環境を作成する
+
+vscode でポートに新しく 8081 を追加する。ここが mongodb のアドレスとなる
+http://localhost:8081
+user: admin
+pass: password
+で　Mongo Express に入れる
+
+Database の中に Users を作った
+KAGUYA というユーザーを作ったので、書き方はそれをクリックすれば見れる。
+json 形式でどんどん追記可能
